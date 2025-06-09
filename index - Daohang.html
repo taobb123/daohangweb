@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Explorer - 三层导航站</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <style>
+        :root {
+            --primary: #6e44ff;
+            --secondary: #5e72e4;
+            --accent: #ff6b6b;
+            --dark: #1a1c2c;
+            --light: #f8f9fe;
+            --gray: #6c757d;
+            --success: #2dce89;
+            --ai-blue: #4d8af0;
+            --ai-purple: #a682ff;
+            --ai-teal: #00d1b2;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 头部导航 */
+        header {
+            background: rgba(26, 28, 44, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(110, 68, 255, 0.3);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .logo i {
+            color: var(--accent);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        /* 主标题区域 */
+        .hero {
+            text-align: center;
+            padding: 6rem 2rem 3rem;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(110, 68, 255, 0.3) 0%, rgba(110, 68, 255, 0) 70%);
+            z-index: -1;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #ff6b6b, #6e44ff, #4d8af0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+        }
+        
+        .search-container {
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            position: relative;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 1.25rem 1.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(26, 28, 44, 0.7);
+            box-shadow: 0 0 25px rgba(255, 107, 107, 0.4);
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .search-btn:hover {
+            background: var(--accent);
+            transform: translateY(-50%) scale(1.05);
+        }
+        
+        /* 标签区域 */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            max-width: 1000px;
+            margin: 0 auto 3rem;
+            padding: 0 1rem;
+        }
+        
+        .tag {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tag:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(110, 68, 255, 0.3);
+        }
+        
+        .tag.active {
+            background: var(--accent);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        .tag i {
+            font-size: 0.9rem;
+        }
+        
+        /* 卡片区域 */
+        .section-title {
+            text-align: center;
+            margin: 4rem auto 2rem;
+            font-size: 2.2rem;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0 2rem;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.8rem;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        .card {
+            background: rgba(26, 28, 44, 0.8);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.3);
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 380px;
+            cursor: pointer;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
+            border-color: rgba(110, 68, 255, 0.5);
+        }
+        
+        .card-large {
+            grid-column: span 2;
+            height: 400px;
+        }
+        
+        .card-img {
+            height: 180px;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+        
+        .card-img-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.6));
+            transition: opacity 0.3s ease;
+        }
+        
+        .card:hover .card-img {
+            transform: scale(1.05);
+        }
+        
+        .card:hover .card-img-overlay {
+            opacity: 0.8;
+        }
+        
+        .card-type {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--accent);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 2;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .card-content {
+            padding: 1.8rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: white;
+        }
+        
+        .card-large h3 {
+            font-size: 1.8rem;
+        }
+        
+        .card p {
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+            font-size: 1rem;
+        }
+        
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-tag {
+            background: rgba(110, 68, 255, 0.25);
+            color: #b6a1ff;
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+        
+        /* 详情页样式 */
+        .detail-page {
+            display: none;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .back-btn:hover {
+            background: var(--primary);
+            transform: translateX(-5px);
+        }
+        
+        .detail-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(26, 28, 44, 0.6);
+            border-radius: 20px;
+            border: 1px solid rgba(110, 68, 255, 0.3);
+        }
+        
+        .detail-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #ff6b6b, #6e44ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .detail-description {
+            color: rgba(255, 255, 255, 0.85);
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        .resources-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .resource-card {
+            background: rgba(26, 28, 44, 0.8);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 100%;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.2);
+        }
+        
+        .resource-img {
+            height: 160px;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .resource-content {
+            padding: 1.5rem;
+        }
+        
+        .resource-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.75rem;
+            color: white;
+        }
+        
+        .resource-description {
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+            font-size: 0.95rem;
+        }
+        
+        .resource-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary);
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .resource-link:hover {
+            background: var(--accent);
+            transform: translateX(5px);
+        }
+        
+        /* 页脚 */
+        footer {
+            text-align: center;
+            padding: 4rem 2rem 2rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 4rem;
+            font-size: 0.95rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+        
+        .copyright {
+            margin-top: 1.5rem;
+        }
+        
+        /* 动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1100px) {
+            .cards-container {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+            
+            .card-large {
+                grid-column: span 1;
+            }
+            
+            .hero h1 {
+                font-size: 3rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero {
+                padding: 4rem 1rem 2rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .cards-container {
+                padding: 0 1rem;
+                gap: 1.2rem;
+            }
+            
+            .card {
+                height: 360px;
+            }
+            
+            .card-img {
+                height: 160px;
+            }
+            
+            .detail-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 主页 -->
+    <div id="main-page">
+        <header>
+            <div class="logo" onclick="showMainPage()">
+                <i class="fas fa-robot"></i>
+                <span>AI Explorer</span>
+            </div>
+            <nav class="nav-links">
+                <a href="#" class="active">AI发现</a>
+                <a href="#">工具大全</a>
+                <a href="#">精选合集</a>
+                <a href="#">最新AI</a>
+                <a href="#">提交资源</a>
+            </nav>
+        </header>
+        
+        <section class="hero">
+            <h1>探索人工智能的未来世界</h1>
+            <p>发现最先进的AI工具、平台和资源，从文本生成到图像创作，从代码辅助到数据分析，一站式满足您的AI需求</p>
+            
+            <div class="search-container">
+                <input type="text" class="search-box" placeholder="搜索AI工具、应用或技术...">
+                <button class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </section>
+        
+        <div class="tags-container">
+            <div class="tag active" data-target="all">
+                <i class="fas fa-star"></i> 全部
+            </div>
+            <div class="tag" data-target="text-generation">
+                <i class="fas fa-comment"></i> 文本生成
+            </div>
+            <div class="tag" data-target="image-creation">
+                <i class="fas fa-image"></i> 图像创作
+            </div>
+            <div class="tag" data-target="coding-assistant">
+                <i class="fas fa-code"></i> 编程辅助
+            </div>
+            <div class="tag" data-target="video-generation">
+                <i class="fas fa-video"></i> 视频生成
+            </div>
+        </div>
+        
+        <h2 class="section-title">AI应用精选合集</h2>
+        
+        <div class="cards-container">
+            <div class="card card-large" data-id="ai-collection">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80');">
+                    <div class="card-img-overlay"></div>
+                </div>
+                <div class="card-type">AI精选合集</div>
+                <div class="card-content">
+                    <h3>AI工具大全</h3>
+                    <p>超过200个实用AI工具，涵盖文本生成、图像创作、视频处理、编程辅助等各个领域，持续更新最新AI应用。</p>
+                    <div class="card-tags">
+                        <div class="card-tag">文本生成</div>
+                        <div class="card-tag">图像创作</div>
+                        <div class="card-tag">编程辅助</div>
+                        <div class="card-tag">视频生成</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" data-id="text-generation">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=800&q=80');">
+                    <div class="card-img-overlay"></div>
+                </div>
+                <div class="card-type">文本生成</div>
+                <div class="card-content">
+                    <h3>文本生成工具</h3>
+                    <p>先进的文本生成AI工具，能够创作文章、编写代码、生成营销文案，甚至创作诗歌和小说。</p>
+                    <div class="card-tags">
+                        <div class="card-tag">内容创作</div>
+                        <div class="card-tag">AI写作</div>
+                        <div class="card-tag">文案生成</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" data-id="image-creation">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80');">
+                    <div class="card-img-overlay"></div>
+                </div>
+                <div class="card-type">图像创作</div>
+                <div class="card-content">
+                    <h3>AI图像生成</h3>
+                    <p>通过文本描述生成高质量图像的艺术工具，支持多种艺术风格，从写实到抽象应有尽有。</p>
+                    <div class="card-tags">
+                        <div class="card-tag">艺术创作</div>
+                        <div class="card-tag">设计辅助</div>
+                        <div class="card-tag">数字艺术</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" data-id="coding-assistant">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80');">
+                    <div class="card-img-overlay"></div>
+                </div>
+                <div class="card-type">编程辅助</div>
+                <div class="card-content">
+                    <h3>AI编程助手</h3>
+                    <p>智能代码生成工具，帮助开发者提高效率，自动完成代码、调试错误并提供优化建议。</p>
+                    <div class="card-tags">
+                        <div class="card-tag">开发工具</div>
+                        <div class="card-tag">代码生成</div>
+                        <div class="card-tag">生产力</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" data-id="video-generation">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80');">
+                    <div class="card-img-overlay"></div>
+                </div>
+                <div class="card-type">视频生成</div>
+                <div class="card-content">
+                    <h3>AI视频创作</h3>
+                    <p>利用AI技术生成和编辑视频内容，包括动画、特效和虚拟主播，简化视频制作流程。</p>
+                    <div class="card-tags">
+                        <div class="card-tag">视频编辑</div>
+                        <div class="card-tag">特效生成</div>
+                        <div class="card-tag">内容创作</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" data-id="ai-learning">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=800&q=80');">
+                    <div class="card-img-overlay"></div>
+                </div>
+                <div class="card-type">AI学习</div>
+                <div class="card-content">
+                    <h3>AI学习资源</h3>
+                    <p>从入门到精通的人工智能学习路径，包含课程、教程和实战项目，适合所有水平的学习者。</p>
+                    <div class="card-tags">
+                        <div class="card-tag">教育平台</div>
+                        <div class="card-tag">在线课程</div>
+                        <div class="card-tag">学习路径</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="section-title">热门AI工具</h2>
+        
+        <div class="cards-container">
+            <div class="card" data-id="chatgpt">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80');">
+                    <div class="card-img-overlay"></div>
+                </div>
+                <div class="card-type">文本生成</div>
+                <div class="card-content">
+                    <h3>ChatGPT</h3>
+                    <p>OpenAI开发的高级对话AI，能够生成自然语言文本、回答问题、撰写内容、翻译语言等。</p>
+                    <div class="card-tags">
+                        <div class="card-tag">对话AI</div>
+                        <div class="card-tag">内容创作</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" data-id="midjourney">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=800&q=80');">
+                    <div class="card-img-overlay"></div>
+                </div>
+                <div class="card-type">图像创作</div>
+                <div class="card-content">
+                    <h3>Midjourney</h3>
+                    <p>强大的AI图像生成工具，通过文本提示创建高质量的艺术作品和图像，支持多种艺术风格。</p>
+                    <div class="card-tags">
+                        <div class="card-tag">AI绘画</div>
+                        <div class="card-tag">艺术创作</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" data-id="copilot">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80');">
+                    <div class="card-img-overlay"></div>
+                </div>
+                <div class="card-type">编程辅助</div>
+                <div class="card-content">
+                    <h3>GitHub Copilot</h3>
+                    <p>AI编程助手，基于OpenAI技术，支持多种编程语言，能够根据上下文自动生成代码建议。</p>
+                    <div class="card-tags">
+                        <div class="card-tag">AI编程</div>
+                        <div class="card-tag">开发工具</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="footer-links">
+                <a href="#">关于我们</a>
+                <a href="#">提交资源</a>
+                <a href="#">使用条款</a>
+                <a href="#">隐私政策</a>
+                <a href="#">联系我们</a>
+            </div>
+            <p>AI Explorer - 探索人工智能的未来</p>
+            <p class="copyright">© 2025 AI资源导航 | 每日更新最新AI工具与应用</p>
+        </footer>
+    </div>
+    
+    <!-- 详情页 -->
+    <div id="detail-page" class="detail-page">
+        <div class="container">
+            <a class="back-btn" onclick="showMainPage()">
+                <i class="fas fa-arrow-left"></i> 返回主页
+            </a>
+            
+            <div class="detail-header">
+                <h2 class="detail-title" id="detail-title">AI工具大全</h2>
+                <p class="detail-description" id="detail-description">超过200个实用AI工具，涵盖文本生成、图像创作、视频处理、编程辅助等各个领域，持续更新最新AI应用。</p>
+            </div>
+            
+            <div class="resources-container" id="resources-container">
+                <!-- 资源卡片将通过JS动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 标签点击事件
+        document.querySelectorAll('.tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                // 移除所有标签的active类
+                document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+                // 添加当前标签的active类
+                this.classList.add('active');
+                
+                const target = this.getAttribute('data-target');
+                
+                if (target === 'all') {
+                    // 滚动到页面顶部
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    // 滚动到目标卡片
+                    const targetCard = document.querySelector(`.cards-container:first-of-type .card[data-id="${target}"]`);
+                    if (targetCard) {
+                        targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            });
+        });
+        
+        // 卡片点击事件
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                showDetailPage(id);
+            });
+        });
+        
+        // 显示详情页
+        function showDetailPage(id) {
+            document.getElementById('main-page').style.display = 'none';
+            document.getElementById('detail-page').style.display = 'block';
+            
+            // 根据ID加载详情
+            const detail = getDetailData(id);
+            document.getElementById('detail-title').textContent = detail.title;
+            document.getElementById('detail-description').textContent = detail.description;
+            
+            // 生成资源卡片
+            const container = document.getElementById('resources-container');
+            container.innerHTML = '';
+            
+            detail.resources.forEach(resource => {
+                const card = document.createElement('div');
+                card.className = 'resource-card';
+                card.innerHTML = `
+                    <div class="resource-img" style="background: ${resource.gradient};"></div>
+                    <div class="resource-content">
+                        <h3 class="resource-title">${resource.title}</h3>
+                        <p class="resource-description">${resource.description}</p>
+                        <a href="${resource.url}" target="_blank" class="resource-link">
+                            访问网站 <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+        
+        // 显示主页
+        function showMainPage() {
+            document.getElementById('detail-page').style.display = 'none';
+            document.getElementById('main-page').style.display = 'block';
+        }
+        
+        // 详情数据
+        function getDetailData(id) {
+            const data = {
+                'ai-collection': {
+                    title: 'AI工具大全',
+                    description: '超过200个实用AI工具，涵盖文本生成、图像创作、视频处理、编程辅助等各个领域，持续更新最新AI应用。',
+                    resources: [
+                        {
+                            title: 'Futurepedia',
+                            description: '最大的AI工具目录，每日更新最新AI工具和应用，涵盖各个领域。',
+                            gradient: 'linear-gradient(45deg, #4d8af0, #a682ff)',
+                            image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80',
+                            url: 'https://www.futurepedia.io/'
+                        },
+                        {
+                            title: 'There\'s An AI For That',
+                            description: '全面的AI工具数据库，包含超过10,000个AI工具，支持分类搜索。',
+                            gradient: 'linear-gradient(45deg, #ff9a9e, #fad0c4)',
+                            image: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=800&q=80',
+                            url: 'https://theresanaiforthat.com/'
+                        },
+                        {
+                            title: 'AI Tools Directory',
+                            description: '精心策划的AI工具集合，按类别组织，帮助您快速找到所需工具。',
+                            gradient: 'linear-gradient(45deg, #a1c4fd, #c2e9fb)',
+                            image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
+                            url: 'https://aitoolsdirectory.com/'
+                        },
+                        {
+                            title: 'AI Valley',
+                            description: 'AI工具和资源聚合平台，包含工具评测、使用教程和最新资讯。',
+                            gradient: 'linear-gradient(45deg, #d4fc79, #96e6a1)',
+                            image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80',
+                            url: 'https://aivalley.ai/'
+                        },
+                        {
+                            title: 'Top AI Tools',
+                            description: '精选最佳AI工具，提供详细的功能介绍和用户评价，帮助您做出选择。',
+                            gradient: 'linear-gradient(45deg, #fbc2eb, #a6c1ee)',
+                            image: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80',
+                            url: 'https://topaitools.com/'
+                        },
+                        {
+                            title: 'AI Hub',
+                            description: 'AI工具和资源中心，包含免费和付费工具，支持按功能筛选。',
+                            gradient: 'linear-gradient(45deg, #f6d365, #fda085)',
+                            image: 'https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=800&q=80',
+                            url: 'https://aihub.com/'
+                        }
+                    ]
+                },
+                'text-generation': {
+                    title: '文本生成工具',
+                    description: '先进的文本生成AI工具，能够创作文章、编写代码、生成营销文案，甚至创作诗歌和小说。',
+                    resources: [
+                        {
+                            title: 'ChatGPT',
+                            description: 'OpenAI开发的高级对话AI，能够生成自然语言文本、回答问题、撰写内容。',
+                            gradient: 'linear-gradient(45deg, #4d8af0, #a682ff)',
+                            image: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80',
+                            url: 'https://chat.openai.com/'
+                        },
+                        {
+                            title: 'Claude',
+                            description: 'Anthropic开发的大语言模型，专注于安全性和实用性，支持长文本处理。',
+                            gradient: 'linear-gradient(45deg, #5ee7df, #b490ca)',
+                            image: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=800&q=80',
+                            url: 'https://claude.ai/'
+                        },
+                        {
+                            title: 'Jasper',
+                            description: 'AI内容创作平台，帮助撰写博客文章、社交媒体内容和营销文案。',
+                            gradient: 'linear-gradient(45deg, #ff9a9e, #fad0c4)',
+                            image: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=800&q=80',
+                            url: 'https://www.jasper.ai/'
+                        },
+                        {
+                            title: 'Copy.ai',
+                            description: 'AI文案生成工具，快速创建广告文案、产品描述和社交媒体内容。',
+                            gradient: 'linear-gradient(45deg, #a1c4fd, #c2e9fb)',
+                            image: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=800&q=80',
+                            url: 'https://www.copy.ai/'
+                        }
+                    ]
+                },
+                'image-creation': {
+                    title: 'AI图像生成',
+                    description: '通过文本描述生成高质量图像的艺术工具，支持多种艺术风格，从写实到抽象应有尽有。',
+                    resources: [
+                        {
+                            title: 'Midjourney',
+                            description: '强大的AI图像生成工具，通过文本提示创建高质量的艺术作品和图像。',
+                            gradient: 'linear-gradient(45deg, #cd9cf2, #f6f3ff)',
+                            image: 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=800&q=80',
+                            url: 'https://www.midjourney.com/'
+                        },
+                        {
+                            title: 'DALL·E 3',
+                            description: 'OpenAI开发的图像生成系统，能够根据详细文本描述创建逼真图像。',
+                            gradient: 'linear-gradient(45deg, #ff5858, #f09819)',
+                            image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
+                            url: 'https://openai.com/dall-e'
+                        },
+                        {
+                            title: 'Stable Diffusion',
+                            description: '开源的文本到图像生成模型，可在本地运行，支持高度自定义和模型微调。',
+                            gradient: 'linear-gradient(45deg, #4facfe, #00f2fe)',
+                            image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
+                            url: 'https://stablediffusionweb.com/'
+                        },
+                        {
+                            title: 'Leonardo AI',
+                            description: 'AI艺术创作平台，提供多种艺术风格和高级图像编辑功能。',
+                            gradient: 'linear-gradient(45deg, #84fab0, #8fd3f4)',
+                            image: 'https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=800&q=80',
+                            url: 'https://leonardo.ai/'
+                        }
+                    ]
+                }
+            };
+            
+            return data[id] || data['ai-collection'];
+        }
+        
+        // 初始描述
+        const description = "探索最前沿的人工智能应用，从日常工具到专业解决方案，为您提供全面的AI资源导航";
+    </script>
+</body>
+</html>
